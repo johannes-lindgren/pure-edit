@@ -7,6 +7,10 @@ import {
   AlertTitle,
   Divider,
   Switch,
+  IconButton,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material'
 import {
   ChangeEventHandler,
@@ -52,6 +56,7 @@ import {
   isObjectContent,
   BooleanInput,
   isBooleanContent,
+  ContentReference,
 } from '@editor/model'
 import {
   Label,
@@ -68,6 +73,10 @@ import * as React from 'react'
 import { createSelector } from 'reselect'
 import { Dropdown } from '@mui/base/Dropdown'
 import { Menu } from '@mui/base/Menu'
+import { Braces } from './Braces.tsx'
+import { BracketContainer } from './BracketContainer.tsx'
+import { Bracket } from './Bracket.tsx'
+import { ExpandMore, RemoveCircleOutlineOutlined } from '@mui/icons-material'
 
 type UpdateFn<T> = (draft: T) => void
 
@@ -418,7 +427,7 @@ const NumberContentInputView: FunctionComponent<{
   const inputId = useId()
   const helperTextId = useId()
   const update = useUpdater()
-  const handleInput = (e, value: number | null) => {
+  const handleInput = (_e: unknown, value: number | null) => {
     // Must save in a variable because e will become destroyed after the event handler finishes,
     //  and the producer callback function might be called later
     if (value === null) {
@@ -536,33 +545,35 @@ const ObjectContentInputView: FunctionComponent<{
   }
 
   return (
-    <Stack
-      sx={{
-        gap: 1,
-        pl: 2,
-        // border: 1,
-        // borderColor: 'divider',
-        // borderRadius: 1,
-        borderLeftColor: 'primary.main',
-        borderLeftWidth: 2,
-        borderLeftStyle: 'solid',
-      }}
-    >
-      <Typography variant="subtitle1">{props.schema.label}</Typography>
-      {Object.entries(schema.fields).map(([key, field]) => {
-        const childContent = content.value[key]
-        if (!childContent) {
-          return <MissingPropertyView propertyName={key} />
-        }
-        return (
-          <ContentInputView
-            schema={field}
-            key={key}
-            uuid={childContent.valueUuid}
-          />
-        )
-      })}
-    </Stack>
+    <BracketContainer BracketComponent={Braces}>
+      <Accordion
+        defaultExpanded
+        elevation={0}
+      >
+        <AccordionSummary expandIcon={<ExpandMore />}>
+          <Typography variant="subtitle1">
+            {props.schema.label ?? 'Object'}
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Stack gap={2}>
+            {Object.entries(schema.fields).map(([key, field]) => {
+              const childContent = content.value[key]
+              if (!childContent) {
+                return <MissingPropertyView propertyName={key} />
+              }
+              return (
+                <ContentInputView
+                  schema={field}
+                  key={key}
+                  uuid={childContent.valueUuid}
+                />
+              )
+            })}
+          </Stack>
+        </AccordionDetails>
+      </Accordion>
+    </BracketContainer>
   )
 })
 
@@ -583,9 +594,6 @@ const ArrayContentInputView: FunctionComponent<{
   const update = useUpdater()
   const content = useContentByUuid(uuid)
 
-  const [isOpen, setIsOpen] = useState(false)
-  const [transitionEndCounter, setTransitionEndCounter] = useState(0)
-
   if (content === undefined) {
     return <ContentNotFoundView uuid={uuid} />
   }
@@ -599,63 +607,65 @@ const ArrayContentInputView: FunctionComponent<{
     )
   }
 
-  const handleAdd = (content: FlatContent) => {
+  const handleAdd = (contentToAdd: FlatContent) => {
     update((draft) => {
       const currentContent = draft.data[uuid]
       if (!isArrayContent(currentContent)) {
         return
       }
 
-      Object.assign(draft.data, content.data)
+      Object.assign(draft.data, contentToAdd.data)
       currentContent.value.push({
         tag: 'reference',
         uuid: randomUuid(),
-        valueUuid: content.rootUuid,
+        valueUuid: contentToAdd.rootUuid,
       })
     })
   }
 
-  const createHandleMenuClick = (contentTemplate: FlatContent) => {
-    return () => {
-      update((draft) => {
-        const currentContent = draft.data[uuid]
-        if (!isArrayContent(currentContent)) {
-          return
-        }
-        const clonedStore = cloneContent(contentTemplate)
-
-        Object.assign(draft.data, clonedStore.data)
-        currentContent.value.push({
-          tag: 'reference',
-          uuid: randomUuid(),
-          valueUuid: clonedStore.rootUuid,
-        })
-      })
-    }
+  const handleRemove = (contentToRemove: ContentReference) => {
+    update((draft) => {
+      const currentContent = draft.data[uuid]
+      if (!isArrayContent(currentContent)) {
+        return
+      }
+      currentContent.value = currentContent.value.filter(
+        (it) => it.valueUuid !== contentToRemove.valueUuid,
+      )
+    })
   }
+
   return (
-    <Stack
-      sx={{
-        gap: 2,
-        p: 2,
-        border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
-      }}
-    >
-      {content.value.map((childContent) => (
-        <ContentInputViewReferencedSchema
-          key={childContent.uuid}
-          uuid={childContent.valueUuid}
-        />
-      ))}
-      <SelectContentFromTemplateView
-        templates={schema.items}
-        onChange={handleAdd}
-      >
-        Add
-      </SelectContentFromTemplateView>
-    </Stack>
+    <BracketContainer BracketComponent={Bracket}>
+      <Stack gap={1}>
+        {content.value.map((childContent) => (
+          <Box
+            key={childContent.uuid}
+            sx={{
+              display: 'flex',
+              gap: 1,
+              alignItems: 'center',
+            }}
+          >
+            <IconButton
+              size="small"
+              onClick={() => handleRemove(childContent)}
+            >
+              <RemoveCircleOutlineOutlined fontSize="inherit" />
+            </IconButton>
+            <Stack flex={1}>
+              <ContentInputViewReferencedSchema uuid={childContent.valueUuid} />
+            </Stack>
+          </Box>
+        ))}
+        <SelectContentFromTemplateView
+          templates={schema.items}
+          onChange={handleAdd}
+        >
+          Add
+        </SelectContentFromTemplateView>
+      </Stack>
+    </BracketContainer>
   )
 })
 

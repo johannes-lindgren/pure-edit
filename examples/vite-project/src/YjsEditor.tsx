@@ -144,6 +144,7 @@ const pageInput = objectInput({
     }),
     align: alignInput,
     body: objectInput({
+      label: 'Body',
       fields: {
         title: textInput({
           label: 'Title',
