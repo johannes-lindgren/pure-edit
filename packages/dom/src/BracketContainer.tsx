@@ -14,7 +14,7 @@ export const BracketContainer: FunctionComponent<{
       sx={{
         display: 'flex',
         flexDirection: 'row',
-        gap: 2,
+        gap: 0,
       }}
     >
       <BracketComponent

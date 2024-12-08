@@ -11,6 +11,7 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  Collapse,
 } from '@mui/material'
 import {
   ChangeEventHandler,
@@ -77,6 +78,7 @@ import { Braces } from './Braces.tsx'
 import { BracketContainer } from './BracketContainer.tsx'
 import { Bracket } from './Bracket.tsx'
 import { ExpandMore, RemoveCircleOutlineOutlined } from '@mui/icons-material'
+import { TransitionGroup } from 'react-transition-group'
 
 type UpdateFn<T> = (draft: T) => void
 
@@ -637,26 +639,32 @@ const ArrayContentInputView: FunctionComponent<{
 
   return (
     <BracketContainer BracketComponent={Bracket}>
-      <Stack gap={1}>
+      <Stack
+        gap={1}
+        component={TransitionGroup}
+      >
         {content.value.map((childContent) => (
-          <Box
-            key={childContent.uuid}
-            sx={{
-              display: 'flex',
-              gap: 1,
-              alignItems: 'center',
-            }}
-          >
-            <IconButton
-              size="small"
-              onClick={() => handleRemove(childContent)}
+          <Collapse key={childContent.uuid}>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 1,
+                alignItems: 'center',
+              }}
             >
-              <RemoveCircleOutlineOutlined fontSize="inherit" />
-            </IconButton>
-            <Stack flex={1}>
-              <ContentInputViewReferencedSchema uuid={childContent.valueUuid} />
-            </Stack>
-          </Box>
+              <IconButton
+                size="small"
+                onClick={() => handleRemove(childContent)}
+              >
+                <RemoveCircleOutlineOutlined fontSize="inherit" />
+              </IconButton>
+              <Stack flex={1}>
+                <ContentInputViewReferencedSchema
+                  uuid={childContent.valueUuid}
+                />
+              </Stack>
+            </Box>
+          </Collapse>
         ))}
         <SelectContentFromTemplateView
           templates={schema.items}
