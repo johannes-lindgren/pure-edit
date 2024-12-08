@@ -1,7 +1,13 @@
-import { styled } from '@mui/system'
+import { styled } from '@mui/material'
 import { useFormControlContext } from '@mui/base'
 import React from 'react'
 import clsx from 'clsx'
+import { Typography } from '@mui/material'
+
+const Lab = styled(Typography)(({ theme }) => ({
+  ...theme.typography.caption,
+  color: theme.palette.text.secondary,
+}))
 
 export const Label = styled(
   ({
@@ -21,25 +27,24 @@ export const Label = styled(
     }, [formControlContext])
 
     if (formControlContext === undefined) {
-      return <p>{children}</p>
+      return <Lab>{children}</Lab>
     }
 
     const { error, required, filled } = formControlContext
     const showRequiredError = dirty && required && !filled
 
     return (
-      <p
+      <Lab
         className={clsx(className, error || showRequiredError ? 'invalid' : '')}
       >
         {children}
         {required ? ' *' : ''}
-      </p>
+      </Lab>
     )
   },
 )`
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 0.875rem;
-  margin-bottom: 4px;
 
   &.invalid {
     color: red;

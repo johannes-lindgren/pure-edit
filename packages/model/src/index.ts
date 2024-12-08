@@ -3,6 +3,7 @@ import {
   isArray,
   isNumber,
   isString,
+  isUnknown,
   objectGuard,
   optional,
   optionalGuard,
@@ -126,9 +127,20 @@ export type ObjectContent = {
   input?: ContentInputReference
   value: Record<string, ContentReference>
 }
+
+export const isObjectContent = objectGuard<
+  Omit<ObjectContent, 'value'> & { value?: unknown }
+>({
+  tag: equalsGuard('object'),
+  uuid: isUuid,
+  input: optionalGuard(isContentInputReference),
+  value: optionalGuard(isUnknown),
+})
+
 export type ObjectContentInput = {
   tag: 'object-input'
   uuid: Uuid
+  label?: string
   fields: Record<string, ContentInput>
 }
 

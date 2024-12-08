@@ -121,9 +121,10 @@ const alignInput = oneOfInput({
 })
 
 const pageInput = objectInput({
+  label: 'Page',
   fields: {
     type: primitiveInput({
-      label: 'Type',
+      label: 'Page',
       value: 'page',
     }),
     title: textInput({
@@ -338,14 +339,9 @@ export const YjsEditor = () => {
           borderRadius: 2,
           p: 2,
           flex: 1,
+          boxShadow: 0,
         }}
       >
-        <Typography
-          variant="h6"
-          component="div"
-        >
-          Editor
-        </Typography>
         <Editor
           store={contentStore}
           inputStore={inputStore}

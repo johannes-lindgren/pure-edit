@@ -47,6 +47,7 @@ import {
   toFlat,
   isOneOfContent,
   OneOfContentInput,
+  isObjectContent,
 } from '@editor/model'
 import {
   Label,
@@ -288,13 +289,11 @@ const PrimitiveContentInputView: FunctionComponent<{
 
   return (
     <FormControl>
-      {schema.label && <Label>{schema.label}</Label>}
       <StyledInput
         disabled
-        label={schema.label}
         id={inputId}
         aria-describedby={helperTextId}
-        value={content.value}
+        value={schema.label}
       />
     </FormControl>
   )
@@ -455,12 +454,12 @@ const OneOfInputView: FunctionComponent<{
       <Stack gap={1}>
         {schema.label && <Label>{schema.label}</Label>}
         <ContentInputViewReferencedSchema uuid={content.value.valueUuid} />
-        {/*<SelectContentFromTemplateView*/}
-        {/*  templates={schema.options}*/}
-        {/*  onChange={handleAdd}*/}
-        {/*>*/}
-        {/*  Change*/}
-        {/*</SelectContentFromTemplateView>*/}
+        <SelectContentFromTemplateView
+          templates={schema.options}
+          onChange={handleAdd}
+        >
+          Change
+        </SelectContentFromTemplateView>
       </Stack>
     </FormControl>
   )
@@ -478,17 +477,25 @@ const ObjectContentInputView: FunctionComponent<{
     return <ContentNotFoundView uuid={uuid} />
   }
 
+  if (!isObjectContent(content)) {
+    // TODO: Show error message
+    return 'content is not an object'
+  }
+
   return (
     <Stack
       sx={{
-        gap: 2,
-        p: 2,
-        border: 1,
-        borderColor: 'divider',
-        borderRadius: 1,
+        gap: 1,
+        pl: 2,
+        // border: 1,
+        // borderColor: 'divider',
+        // borderRadius: 1,
+        borderLeftColor: 'primary.main',
+        borderLeftWidth: 2,
+        borderLeftStyle: 'solid',
       }}
     >
-      <Label>Object</Label>
+      <Typography variant="subtitle1">{props.schema.label}</Typography>
       {Object.entries(schema.fields).map(([key, field]) => {
         const childContent = content.value[key]
         if (!childContent) {
@@ -634,7 +641,7 @@ const SelectContentFromTemplateView: FunctionComponent<{
                 p: 0,
               }}
             >
-              <Scale scale={2 / 4}>
+              <Scale scale={3 / 4}>
                 <ContentPreview template={template} />
               </Scale>
             </MenuItem>
