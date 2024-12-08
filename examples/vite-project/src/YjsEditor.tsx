@@ -19,7 +19,7 @@ import {
   primitiveInput,
   FlatContent,
   inputRef,
-  ContentInput,
+  Input,
   InputMap,
   booleanInput,
 } from '@editor/model'
@@ -308,7 +308,7 @@ const contentTree = {
   },
 }
 
-const toInputMap = (library: Record<string, ContentInput>): InputMap => ({
+const toInputMap = (library: Record<string, Input>): InputMap => ({
   tag: 'content-input-store',
   data: Object.fromEntries(
     Object.entries(library).map(([_key, value]) => [value.uuid, value]),

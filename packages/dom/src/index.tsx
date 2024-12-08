@@ -24,17 +24,17 @@ import {
   useSyncExternalStore,
 } from 'react'
 import {
-  ContentInput,
-  ObjectContentInput,
-  TextContentInput,
-  NumberContentInput,
+  Input,
+  ObjectInput,
+  TextInput,
+  NumberInput,
   Uuid,
   isTextContent,
   isNumberContent,
-  ArrayContentInput,
+  ArrayInput,
   isArrayContent,
   isPrimitiveContent,
-  PrimitiveContentInput,
+  PrimitiveInput,
   Content,
   textInput,
   numberInput,
@@ -48,9 +48,9 @@ import {
   FlatStore,
   toFlat,
   isOneOfContent,
-  OneOfContentInput,
+  OneOfInput,
   isObjectContent,
-  BooleanContentInput,
+  BooleanInput,
   isBooleanContent,
 } from '@editor/model'
 import {
@@ -164,7 +164,7 @@ const useContentByUuid = (uuid: Uuid) => {
 }
 
 const useContentInputByUuid = (uuid: Uuid) => {
-  const selectByUuid = useSelectByUuid<ContentInput>(uuid)
+  const selectByUuid = useSelectByUuid<Input>(uuid)
   return useInputSelector(selectByUuid)
 }
 
@@ -187,7 +187,7 @@ const JsonView: FunctionComponent<{ data: unknown }> = (props) => {
 }
 
 export const UnknownContentView: FunctionComponent<{
-  schema: ContentInput
+  schema: Input
   content: unknown
 }> = memo((props) => {
   const { schema, content } = props
@@ -210,7 +210,7 @@ export const UnknownContentView: FunctionComponent<{
 })
 
 export const UnknownInputView: FunctionComponent<{
-  schema: ContentInput
+  schema: Input
 }> = memo((props) => {
   const { schema } = props
   return (
@@ -270,7 +270,7 @@ export const MissingPropertyView: FunctionComponent<{
 })
 
 const PrimitiveContentInputView: FunctionComponent<{
-  schema: PrimitiveContentInput
+  schema: PrimitiveInput
   uuid: Uuid
 }> = memo((props) => {
   const { schema, uuid } = props
@@ -304,7 +304,7 @@ const PrimitiveContentInputView: FunctionComponent<{
 })
 
 const BooleanContentInputView: FunctionComponent<{
-  schema: BooleanContentInput
+  schema: BooleanInput
   uuid: Uuid
 }> = memo((props) => {
   const { schema, uuid } = props
@@ -353,7 +353,7 @@ const BooleanContentInputView: FunctionComponent<{
 })
 
 const TextContentInputView: FunctionComponent<{
-  schema: TextContentInput
+  schema: TextInput
   uuid: Uuid
 }> = memo((props) => {
   const { schema, uuid } = props
@@ -410,7 +410,7 @@ const TextContentInputView: FunctionComponent<{
 })
 
 const NumberContentInputView: FunctionComponent<{
-  schema: NumberContentInput
+  schema: NumberInput
   uuid: Uuid
 }> = memo((props) => {
   const { schema, uuid } = props
@@ -463,7 +463,7 @@ const NumberContentInputView: FunctionComponent<{
 })
 
 const OneOfInputView: FunctionComponent<{
-  schema: OneOfContentInput
+  schema: OneOfInput
   uuid: Uuid
 }> = memo((props) => {
   const { schema, uuid } = props
@@ -519,7 +519,7 @@ const OneOfInputView: FunctionComponent<{
 })
 
 const ObjectContentInputView: FunctionComponent<{
-  schema: ObjectContentInput
+  schema: ObjectInput
   uuid: Uuid
 }> = memo((props) => {
   const { schema, uuid } = props
@@ -575,7 +575,7 @@ const selectContentStoreByUuid = createSelector(
 )
 
 const ArrayContentInputView: FunctionComponent<{
-  schema: ArrayContentInput
+  schema: ArrayInput
   uuid: Uuid
 }> = memo((props) => {
   const { schema, uuid } = props
@@ -752,7 +752,7 @@ export const ContentInputViewReferencedSchema: FunctionComponent<{
 })
 
 export const ContentInputView: FunctionComponent<{
-  schema: ContentInput
+  schema: Input
   uuid: Uuid
 }> = memo((props) => {
   const { schema, uuid } = props
@@ -817,7 +817,7 @@ export const ContentInputView: FunctionComponent<{
 export type EditorProps = {
   store: ContentStore
   inputStore: InputStore
-  schema: ContentInput
+  schema: Input
   rootUuid: Uuid
 }
 

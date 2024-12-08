@@ -34,21 +34,19 @@ export const isContentReference = objectGuard<ContentReference>({
   valueUuid: isUuid,
 })
 
-export type ContentInputReference = {
+export type InputReference = {
   tag: 'reference-input'
   uuid: Uuid
   inputUuid: Uuid
 }
 
-export const inputRef = (
-  contentInput: ContentInput,
-): ContentInputReference => ({
+export const inputRef = (contentInput: Input): InputReference => ({
   tag: 'reference-input',
   uuid: randomUuid(),
   inputUuid: contentInput.uuid,
 })
 
-export const isContentInputReference = objectGuard<ContentInputReference>({
+export const isContentInputReference = objectGuard<InputReference>({
   tag: equalsGuard('reference-input'),
   uuid: isUuid,
   inputUuid: isUuid,
@@ -61,7 +59,7 @@ export const isContentInputReference = objectGuard<ContentInputReference>({
 export type BooleanContent = {
   tag: 'boolean'
   uuid: Uuid
-  input?: ContentInputReference
+  input?: InputReference
   value: boolean
 }
 
@@ -72,15 +70,15 @@ export const isBooleanContent = objectGuard<BooleanContent>({
   value: isBoolean,
 })
 
-export type BooleanContentInput = {
+export type BooleanInput = {
   tag: 'boolean-input'
   uuid: Uuid
   label?: string
 }
 
 export const booleanInput = (
-  params?: Omit<BooleanContentInput, 'tag' | 'uuid'>,
-): BooleanContentInput => ({
+  params?: Omit<BooleanInput, 'tag' | 'uuid'>,
+): BooleanInput => ({
   tag: 'boolean-input',
   uuid: randomUuid(),
   ...params,
@@ -93,7 +91,7 @@ export const booleanInput = (
 export type TextContent = {
   tag: 'text'
   uuid: Uuid
-  input?: ContentInputReference
+  input?: InputReference
   value: string
 }
 
@@ -104,15 +102,15 @@ export const isTextContent = objectGuard<TextContent>({
   value: isString,
 })
 
-export type TextContentInput = {
+export type TextInput = {
   tag: 'text-input'
   uuid: Uuid
   label?: string
 }
 
 export const textInput = (
-  params?: Omit<TextContentInput, 'tag' | 'uuid'>,
-): TextContentInput => ({
+  params?: Omit<TextInput, 'tag' | 'uuid'>,
+): TextInput => ({
   tag: 'text-input',
   uuid: randomUuid(),
   ...params,
@@ -125,7 +123,7 @@ export const textInput = (
 export type NumberContent = {
   tag: 'number'
   uuid: Uuid
-  input?: ContentInputReference
+  input?: InputReference
   value: number
 }
 
@@ -136,15 +134,15 @@ export const isNumberContent = objectGuard<NumberContent>({
   value: isNumber,
 })
 
-export type NumberContentInput = {
+export type NumberInput = {
   tag: 'number-input'
   uuid: Uuid
   label?: string
 }
 
 export const numberInput = (
-  params?: Omit<NumberContentInput, 'tag' | 'uuid'>,
-): NumberContentInput => ({
+  params?: Omit<NumberInput, 'tag' | 'uuid'>,
+): NumberInput => ({
   tag: 'number-input',
   uuid: randomUuid(),
   ...params,
@@ -157,7 +155,7 @@ export const numberInput = (
 export type ObjectContent = {
   tag: 'object'
   uuid: Uuid
-  input?: ContentInputReference
+  input?: InputReference
   value: Record<string, ContentReference>
 }
 
@@ -170,16 +168,16 @@ export const isObjectContent = objectGuard<
   value: optionalGuard(isUnknown),
 })
 
-export type ObjectContentInput = {
+export type ObjectInput = {
   tag: 'object-input'
   uuid: Uuid
   label?: string
-  fields: Record<string, ContentInput>
+  fields: Record<string, Input>
 }
 
 export const objectInput = (
-  params: Omit<ObjectContentInput, 'tag' | 'uuid'>,
-): ObjectContentInput => ({
+  params: Omit<ObjectInput, 'tag' | 'uuid'>,
+): ObjectInput => ({
   tag: 'object-input',
   uuid: randomUuid(),
   ...params,
@@ -192,7 +190,7 @@ export const objectInput = (
 export type ArrayContent = {
   tag: 'array'
   uuid: Uuid
-  input?: ContentInputReference
+  input?: InputReference
   value: ContentReference[]
 }
 
@@ -203,14 +201,14 @@ export const isArrayContent = objectGuard({
   value: isArray,
 })
 
-export type ArrayContentInput = {
+export type ArrayInput = {
   tag: 'array-input'
   uuid: Uuid
   items: FlatContent[]
 }
 export const arrayInput = (
-  params: Omit<ArrayContentInput, 'tag' | 'uuid'>,
-): ArrayContentInput => ({
+  params: Omit<ArrayInput, 'tag' | 'uuid'>,
+): ArrayInput => ({
   tag: 'array-input',
   uuid: randomUuid(),
   ...params,
@@ -223,7 +221,7 @@ export const arrayInput = (
 export type PrimitiveContent = {
   tag: 'primitive'
   uuid: Uuid
-  input?: ContentInputReference
+  input?: InputReference
   value: string
 }
 
@@ -234,7 +232,7 @@ export const isPrimitiveContent = objectGuard<PrimitiveContent>({
   value: isString,
 })
 
-export type PrimitiveContentInput = {
+export type PrimitiveInput = {
   tag: 'primitive-input'
   uuid: Uuid
   label?: string
@@ -242,8 +240,8 @@ export type PrimitiveContentInput = {
 }
 
 export const primitiveInput = (
-  params: Omit<PrimitiveContentInput, 'tag' | 'uuid'>,
-): PrimitiveContentInput => ({
+  params: Omit<PrimitiveInput, 'tag' | 'uuid'>,
+): PrimitiveInput => ({
   tag: 'primitive-input',
   uuid: randomUuid(),
   ...params,
@@ -256,7 +254,7 @@ export const primitiveInput = (
 export type OneOfContent = {
   tag: 'one-of'
   uuid: Uuid
-  input?: ContentInputReference
+  input?: InputReference
   value: ContentReference
 }
 
@@ -271,7 +269,7 @@ export const isOneOfContent = objectGuard<OneOfContent>({
   }),
 })
 
-export type OneOfContentInput = {
+export type OneOfInput = {
   tag: 'one-of-input'
   uuid: Uuid
   label?: string
@@ -279,8 +277,8 @@ export type OneOfContentInput = {
 }
 
 export const oneOfInput = (
-  params: Omit<OneOfContentInput, 'tag' | 'uuid'>,
-): OneOfContentInput => ({
+  params: Omit<OneOfInput, 'tag' | 'uuid'>,
+): OneOfInput => ({
   tag: 'one-of-input',
   uuid: randomUuid(),
   ...params,
@@ -288,6 +286,13 @@ export const oneOfInput = (
 
 /*
  * All
+ */
+
+/*
+ * TODO
+ *  - optional input
+ *  - reference (need to be able to handle loops)
+ *  - translation
  */
 
 export type Content =
@@ -299,15 +304,15 @@ export type Content =
   | PrimitiveContent
   | OneOfContent
 
-export type ContentInput =
-  | BooleanContentInput
-  | TextContentInput
-  | NumberContentInput
-  | ObjectContentInput
-  | ArrayContentInput
-  | PrimitiveContentInput
-  | OneOfContentInput
-  | ContentInputReference
+export type Input =
+  | PrimitiveInput
+  | BooleanInput
+  | TextInput
+  | NumberInput
+  | ObjectInput
+  | ArrayInput
+  | OneOfInput
+  | InputReference
 
 export type FlatStore<T> = {
   data: Record<Uuid, T>
@@ -321,7 +326,7 @@ export type FlatContent = {
 
 export type InputMap = {
   tag: 'content-input-store'
-  data: Record<Uuid, ContentInput>
+  data: Record<Uuid, Input>
 }
 
 // export type ContentTree = {
