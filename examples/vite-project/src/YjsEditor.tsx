@@ -21,6 +21,7 @@ import {
   inputRef,
   ContentInput,
   InputMap,
+  booleanInput,
 } from '@editor/model'
 import { createBinder } from 'react-immer-yjs'
 import * as Y from 'yjs'
@@ -127,6 +128,9 @@ const pageInput = objectInput({
       label: 'Page',
       value: 'page',
     }),
+    isPublic: booleanInput({
+      label: 'Is Public',
+    }),
     title: textInput({
       label: 'Title',
     }),
@@ -212,6 +216,11 @@ const contentTree = {
       tag: 'primitive',
       uuid: randomUuid(),
       value: 'Page',
+    },
+    isPublic: {
+      tag: 'boolean',
+      uuid: randomUuid(),
+      value: true,
     },
     align: {
       tag: 'one-of',

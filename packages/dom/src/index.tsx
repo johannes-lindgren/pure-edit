@@ -6,8 +6,10 @@ import {
   Box,
   AlertTitle,
   Divider,
+  Switch,
 } from '@mui/material'
 import {
+  ChangeEventHandler,
   createContext,
   FormEventHandler,
   Fragment,
@@ -48,6 +50,8 @@ import {
   isOneOfContent,
   OneOfContentInput,
   isObjectContent,
+  BooleanContentInput,
+  isBooleanContent,
 } from '@editor/model'
 import {
   Label,
@@ -294,6 +298,55 @@ const PrimitiveContentInputView: FunctionComponent<{
         id={inputId}
         aria-describedby={helperTextId}
         value={schema.label}
+      />
+    </FormControl>
+  )
+})
+
+const BooleanContentInputView: FunctionComponent<{
+  schema: BooleanContentInput
+  uuid: Uuid
+}> = memo((props) => {
+  const { schema, uuid } = props
+  const content = useContentByUuid(uuid)
+  const inputId = useId()
+  const helperTextId = useId()
+  const update = useUpdater()
+  const handleInput: ChangeEventHandler<HTMLInputElement> = (e) => {
+    // Must save in a variable because e will become destroyed after the event handler finishes,
+    //  and the producer callback function might be called later
+    const value = e.target.checked
+    update((draft) => {
+      const currentContent = draft.data[uuid]
+      if (!isBooleanContent(currentContent)) {
+        return
+      }
+      draft.data[uuid] = {
+        ...currentContent,
+        value,
+      }
+    })
+  }
+
+  if (content === undefined) {
+    return <ContentNotFoundView uuid={uuid} />
+  }
+
+  if (!isBooleanContent(content)) {
+    return (
+      <UnknownContentView
+        content={content}
+        schema={schema}
+      />
+    )
+  }
+
+  return (
+    <FormControl>
+      {schema.label && <Label>{schema.label}</Label>}
+      <Switch
+        value={content.value}
+        onChange={handleInput}
       />
     </FormControl>
   )
@@ -707,6 +760,13 @@ export const ContentInputView: FunctionComponent<{
     case 'primitive-input':
       return (
         <PrimitiveContentInputView
+          schema={schema}
+          uuid={uuid}
+        />
+      )
+    case 'boolean-input':
+      return (
+        <BooleanContentInputView
           schema={schema}
           uuid={uuid}
         />

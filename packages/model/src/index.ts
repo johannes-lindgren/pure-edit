@@ -1,6 +1,7 @@
 import {
   equalsGuard,
   isArray,
+  isBoolean,
   isNumber,
   isString,
   isUnknown,
@@ -51,6 +52,38 @@ export const isContentInputReference = objectGuard<ContentInputReference>({
   tag: equalsGuard('reference-input'),
   uuid: isUuid,
   inputUuid: isUuid,
+})
+
+/*
+ * Boolean
+ */
+
+export type BooleanContent = {
+  tag: 'boolean'
+  uuid: Uuid
+  input?: ContentInputReference
+  value: boolean
+}
+
+export const isBooleanContent = objectGuard<BooleanContent>({
+  tag: equalsGuard('boolean'),
+  uuid: isUuid,
+  input: optionalGuard(isContentInputReference),
+  value: isBoolean,
+})
+
+export type BooleanContentInput = {
+  tag: 'boolean-input'
+  uuid: Uuid
+  label?: string
+}
+
+export const booleanInput = (
+  params?: Omit<BooleanContentInput, 'tag' | 'uuid'>,
+): BooleanContentInput => ({
+  tag: 'boolean-input',
+  uuid: randomUuid(),
+  ...params,
 })
 
 /*
@@ -258,6 +291,7 @@ export const oneOfInput = (
  */
 
 export type Content =
+  | BooleanContent
   | TextContent
   | NumberContent
   | ObjectContent
@@ -266,6 +300,7 @@ export type Content =
   | OneOfContent
 
 export type ContentInput =
+  | BooleanContentInput
   | TextContentInput
   | NumberContentInput
   | ObjectContentInput
@@ -345,6 +380,9 @@ export const toFlat = (content: ContentTree): FlatContent => {
   const result: Record<Uuid, Content> = {}
 
   switch (content.tag) {
+    case 'boolean':
+      result[content.uuid] = content
+      break
     case 'text':
       result[content.uuid] = content
       break
@@ -417,6 +455,8 @@ export const toTree = (store: FlatContent): ContentTree => {
     throw new Error('Undefined content')
   }
   switch (content.tag) {
+    case 'boolean':
+      return content
     case 'text':
       return content
     case 'number':
@@ -454,6 +494,8 @@ export const toTree = (store: FlatContent): ContentTree => {
 
 export const toValueOnlyTree = (content: ContentTree): ValueOnlyTree => {
   switch (content.tag) {
+    case 'boolean':
+      return content.value
     case 'text':
       return content.value
     case 'number':
